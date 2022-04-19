@@ -50,9 +50,10 @@ class Gun:
             pass
 
 class FireState:
-    def __init__(self, posture, firetype):
+    def __init__(self, posture, firetype,hasbullet):
         self.posture = posture #站0，蹲1，卧2
         self.firetype = firetype #全自动0，单发1，连发2，检测不到3（没枪）
+        self.hasbullet = hasbullet
 
 if __name__ == '__main__':
     gunak = Gun("AUG",'6倍镜','步枪消焰','','')

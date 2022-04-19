@@ -11,9 +11,12 @@ def fire():
     while True:
         if fire_signal[0] :
             start_time = round(time.perf_counter(), 3) * 1000
-            state_temp = get_firestate()
-            fire_state[0] = state_temp.posture
-            fire_state[1] = state_temp.firetype
+            firestate_struct = get_firestate()
+            fire_state[0] = firestate_struct.posture
+            fire_state[1] = firestate_struct.firetype
+            #在这里加一个没子弹检测
+            if not firestate_struct.hasbullet:
+                continue
             i = 0
             gun = Gun()
             gun1 = shared_memory.ShareableList(name='gun1')
@@ -35,6 +38,7 @@ def fire():
                     # print("下压幅度:"+str(down))
                     mouse_xy(0, down)
                     elapsed = (round(time.perf_counter(), 3) * 1000 - start_time)
+                    print(elapsed)
                     if elapsed > gun.para_time[i]:
                         i += 1
                     if i >= gun.para_time.__len__() or not fire_signal[0]:

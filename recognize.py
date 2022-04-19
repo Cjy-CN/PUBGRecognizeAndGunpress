@@ -198,7 +198,12 @@ def get_firestate():
             posture = 2
         else:
             posture = 1
-    state = FireState(posture,firetype)
+
+    has_bullet = True
+    bullet_check = img.getpixel((1286,1354))
+    if bullet_check[0] == 255 and bullet_check[1] == 0 and bullet_check[2] == 0:
+        has_bullet = False
+    state = FireState(posture,firetype,has_bullet)
     return state
 
 
