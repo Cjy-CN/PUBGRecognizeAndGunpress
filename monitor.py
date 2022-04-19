@@ -76,7 +76,7 @@ if __name__=='__main__':
     a2 = shared_memory.ShareableList([False], name='fire_signal')
     a3 = shared_memory.ShareableList([False], name='firestate_inspect')
     a4 = shared_memory.ShareableList([0], name='switch')
-    a5 = shared_memory.ShareableList([0,3], name='fire_state') #第一个值是任务姿势，第二个值是开火模式
+    a5 = shared_memory.ShareableList([0,3], name='fire_state') #第一个值是人物姿势，第二个值是开火模式
     a6 = shared_memory.ShareableList(['','','','',''], name='gun1')
     a7 = shared_memory.ShareableList(['','','','',''], name='gun2')
 
