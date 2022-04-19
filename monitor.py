@@ -1,8 +1,6 @@
-import time
 from multiprocessing import Process
 from multiprocessing import shared_memory
 from threading import Thread
-from ctypes import CDLL
 from pynput import mouse,keyboard
 from dataload import Gun
 from win32gui import GetWindowText, GetForegroundWindow
