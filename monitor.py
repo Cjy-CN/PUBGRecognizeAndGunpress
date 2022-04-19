@@ -1,3 +1,4 @@
+import multiprocessing
 from multiprocessing import Process
 from multiprocessing import shared_memory
 from threading import Thread
@@ -71,15 +72,19 @@ def start_listen():
     t2.join()
 
 if __name__=='__main__':
+    print('begin')
+    multiprocessing.freeze_support()
     # 定义了一堆多进程的“全局变量” py3.8以上支持
-    a1 = shared_memory.ShareableList([False], name='key_pressed')
-    a2 = shared_memory.ShareableList([False], name='fire_signal')
-    a3 = shared_memory.ShareableList([False], name='firestate_inspect')
-    a4 = shared_memory.ShareableList([0], name='switch')
-    a5 = shared_memory.ShareableList([0,3], name='fire_state') #第一个值是人物姿势，第二个值是开火模式
-    a6 = shared_memory.ShareableList(['','','','',''], name='gun1')
-    a7 = shared_memory.ShareableList(['','','','',''], name='gun2')
-
+    try:
+        a1 = shared_memory.ShareableList([False], name='key_pressed')
+        a2 = shared_memory.ShareableList([False], name='fire_signal')
+        a3 = shared_memory.ShareableList([False], name='firestate_inspect')
+        a4 = shared_memory.ShareableList([0], name='switch')
+        a5 = shared_memory.ShareableList([0,3], name='fire_state') #第一个值是人物姿势，第二个值是开火模式
+        a6 = shared_memory.ShareableList(['','','','',''], name='gun1')
+        a7 = shared_memory.ShareableList(['','','','',''], name='gun2')
+    except:
+        pass
     p_fire = Process(target=fire)
     p_listen = Process(target=start_listen)
     p_listen.start()

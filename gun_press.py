@@ -38,7 +38,6 @@ def fire():
                     # print("下压幅度:"+str(down))
                     mouse_xy(0, down)
                     elapsed = (round(time.perf_counter(), 3) * 1000 - start_time)
-                    print(elapsed)
                     if elapsed > gun.para_time[i]:
                         i += 1
                     if i >= gun.para_time.__len__() or not fire_signal[0]:
