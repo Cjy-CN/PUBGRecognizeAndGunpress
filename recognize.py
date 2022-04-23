@@ -1,11 +1,14 @@
+import codecs
+import json
 import os
 
 from PIL import ImageGrab
 import time
 from PIL import Image
 import numpy as np
-
-from dataload import FireState
+import cv2
+from dataload import FireState, GunTest
+from matplotlib import pyplot as plt
 
 
 def current_equipment():
@@ -58,6 +61,25 @@ def current_mirror():
     print('2号倍镜是：' +mirror2)
     return [mirror1,mirror2]
 
+
+
+def compare_parts(file,demo_dir,threshold):
+    '''
+    file:要比较的图像文件路径
+    demo_dir:要与file比较的demo目录路径，以“\”结尾
+    threshlod:设置汉明距离的阈值
+    '''
+    min_distance = threshold
+    content = os.listdir(demo_dir)
+    part = 'None'
+    for each in content:
+        demopath = demo_dir + each
+        tmp_dist = compare2pic(file,demopath,threshold-1)
+        if tmp_dist < min_distance:
+            min_distance = tmp_dist
+            part = str(each)[:-4]
+    return part
+
 def current_posture():
     '''
     早期的姿势识别函数，原理与武器配件一样使用汉明距离，现在已作废，目前姿势识别采用三点像素取样
@@ -78,9 +100,42 @@ def current_posture():
     print('当前姿势：'+posture)
     return
 
-def gun_parts():
-    print('识别配件')
-    return
+def recognize_equiment():
+    gun_1 = compare_parts('./picture/equiment/gun_1.png','./picture/gun/',11)
+    gun_2 = compare_parts('./picture/equiment/gun_2.png','./picture/gun/',11)
+    mirror_1 = compare_parts('./picture/equiment/mirror_1.png','./picture/mirrors/',11)
+    mirror_2 = compare_parts('./picture/equiment/mirror_2.png', './picture/mirrors/', 11)
+    grip_1 = compare_parts('./picture/equiment/grip_1.png','./picture/grip/',11)
+    grip_2 = compare_parts('./picture/equiment/grip_2.png', './picture/grip/', 11)
+    butt_1 = compare_parts('./picture/equiment/butt_1.png','./picture/butt/',11)
+    butt_2 = compare_parts('./picture/equiment/butt_2.png', './picture/butt/', 11)
+    muzzle_1 = 'None'
+    muzzle_2 = 'None'
+    if gun_1 != 'None':
+        try:
+            with codecs.open("./枪械数据/game.json") as f:
+                game_data = json.load(f)
+                gun_data = game_data['list'][gun_1]
+                guntype = gun_data['type']
+                muzzle_path = './picture/muzzle/' + guntype + '/'
+                muzzle_1 = compare_parts('./picture/equiment/muzzle_1.png',muzzle_path, 11)
+        except Exception as e:
+            print(type(e), '::', e)
+    if gun_2 != 'None':
+        try:
+            with codecs.open("./枪械数据/game.json") as f:
+                game_data = json.load(f)
+                gun_data = game_data['list'][gun_2]
+                guntype = gun_data['type']
+                muzzle_path = './picture/muzzle/' + guntype + '/'
+                muzzle_2 = compare_parts('./picture/equiment/muzzle_2.png', muzzle_path, 11)
+        except Exception as e:
+            print(type(e), '::', e)
+    print(gun_1,mirror_1,grip_1,muzzle_1,butt_1)
+    print(gun_2, mirror_2, grip_2, muzzle_2, butt_2)
+    Gun1 = GunTest(gun_1,mirror_1,muzzle_1,grip_1,butt_1)
+    Gun2 = GunTest(gun_2,mirror_2,muzzle_2,grip_2,butt_2)
+    return [Gun1,Gun2]
 
 def is_bag_open():
     bag_chickpoint_screenshot()
@@ -128,7 +183,6 @@ def compare2pic(equi, demo, threshold):
 def make_screenshot(x1, y1, x2,y2):
     bbox = (x1, y1, x2,y2)
     im = ImageGrab.grab(bbox)
-    # im.save('./picture/gun/P90.png')
     return im
 
 #当前装备截图
@@ -138,31 +192,65 @@ def equi_gun_screenshot():
     im_1.save('./picture/equiment/im_1.png' )
     im_2.save('./picture/equiment/im_2.png' )
 
-#当前倍镜截图
-def equi_part_screenshot():
-    im_1 = make_screenshot(2136, 160, 2198, 190)  # 一号倍镜截图区（此数据适用2K分辨率，其余分辨率或者其余游戏自行调整）
-    im_2 = make_screenshot(2136, 466, 2198, 496)  # 二号倍镜截图区（此数据适用2K分辨率，其余分辨率或者其余游戏自行调整）
-    im_1.save('./picture/equiment/mirror_1.png')
-    im_2.save('./picture/equiment/mirror_2.png')
-
 #当前姿势截图
 def posture_screenshot():
     im_1 = make_screenshot(946, 1320, 989, 1367)  # 姿势截图区（此数据适用2K分辨率，其余分辨率或者其余游戏自行调整）
     im_1.save('./picture/equiment/posture.png')
 
+def mirror_screenchot(img):
+    #倍镜
+    mirror_1 = adaptive_binarization(np.array(img.crop((2136, 160, 2198, 190)).convert('L')))
+    mirror_2 = adaptive_binarization(np.array(img.crop((2136, 466, 2198, 496)).convert('L')))
+    cv2.imwrite('./picture/equiment/mirror_1.png', mirror_1)
+    cv2.imwrite('./picture/equiment/mirror_2.png', mirror_2)
+
+def muzzle_screenchot(img):
+    #枪口
+    muzzle_1 = adaptive_binarization(np.array(img.crop((1780,336,1831,388)).convert('L')))
+    muzzle_2 = adaptive_binarization(np.array(img.crop((1780, 642, 1831, 694)).convert('L')))
+    cv2.imwrite('./picture/equiment/muzzle_1.png', muzzle_1)
+    cv2.imwrite('./picture/equiment/muzzle_2.png', muzzle_2)
+    # cv2.imwrite('./picture/muzzle/sub_compensate.png', muzzle_1)
+    # cv2.imwrite('./picture/muzzle/sub_flame.png', muzzle_2)
+
+def grip_screenchot(img):
+    #握把
+    grip_1 = adaptive_binarization(np.array(img.crop((1915,336,1965,388)).convert('L')))
+    grip_2 = adaptive_binarization(np.array(img.crop((1915, 642, 1965, 694)).convert('L')))
+    cv2.imwrite('./picture/equiment/grip_1.png', grip_1)
+    cv2.imwrite('./picture/equiment/grip_2.png', grip_2)
+    # cv2.imwrite('./picture/grip/thumb.png', grip_1)
+    # cv2.imwrite('./picture/grip/half.png', grip_2)
+
+def butt_screenchot(img):
+    #枪托
+    butt_1 = adaptive_binarization(np.array(img.crop((2344,340,2394,388)).convert('L')))
+    butt_2 = adaptive_binarization(np.array(img.crop((2344, 646, 2394, 694)).convert('L')))
+    cv2.imwrite('./picture/equiment/butt_1.png',butt_1)
+    cv2.imwrite('./picture/equiment/butt_2.png', butt_2)
+
+def adaptive_binarization(img):
+    #自适应二值化
+    maxval = 255
+    blockSize = 5
+    C = 5
+    img2 = cv2.adaptiveThreshold(img, maxval, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY, blockSize, C)
+    return img2
+
 #当前背包关键监测点截图
 def bag_chickpoint_screenshot():
+    # 1、2号装备截图对齐原则，适用2560*1440，横坐标不变，纵坐标加306
     img = ImageGrab.grab() #屏幕截图
     bag = img.crop((501,78,573,116)) #提取截屏背包检测点
     im_1 = img.crop((1825, 125, 1905, 165)) #提取截屏武器1
     im_2 = img.crop((1825,431,1905,471)) #提取截屏武器2
-    mirror_1 = img.crop((2136, 160, 2198, 190)) #提取截屏倍镜1
-    mirror_2 = img.crop((2136, 466, 2198, 496)) #提取截屏倍镜2
     bag.save('./picture/equiment/bag.png')
-    im_1.save('./picture/equiment/im_1.png')
-    im_2.save('./picture/equiment/im_2.png')
-    mirror_1.save('./picture/equiment/mirror_1.png')
-    mirror_2.save('./picture/equiment/mirror_2.png')
+    im_1.save('./picture/equiment/gun_1.png')
+    im_2.save('./picture/equiment/gun_2.png')
+    mirror_screenchot(img)
+    muzzle_screenchot(img)
+    grip_screenchot(img)
+    butt_screenchot(img)
 
 def get_pixel_gray(pixel):
     gray = 0
@@ -206,18 +294,24 @@ def get_firestate():
     state = FireState(posture,firetype,has_bullet)
     return state
 
+def bullet_check():
+    img = ImageGrab.grab()
+    gray_list = []
+    gray_list.append(get_pixel_gray(img.getpixel((1290,1359))))
+    gray_list.append(get_pixel_gray(img.getpixel((1296, 1358))))
+    gray_list.append(get_pixel_gray(img.getpixel((1277, 1358))))
+    gray_list.append(get_pixel_gray(img.getpixel((1282, 1359))))
+    gray_list.append(get_pixel_gray(img.getpixel((1285, 1359))))
+    gray_list.append(get_pixel_gray(img.getpixel((1281, 1359))))
+    print(gray_list)
+    max_gray = max(gray_list)
+    print('max_gray:',max_gray)
+    if max_gray > 240:
+        return True
+    else:
+        return False
 
 if __name__=="__main__":
-    # make_screenshot(1825,430,1970,470)
-    # equi_gun_screenshot()
-    # current_equipment()
-    # current_mirror()
-    # equi_part_screenshot()
-    # current_posture()
-    screenshot = ImageGrab.grab()
-    pi = screenshot.getpixel((200,90))
-    v1 = (pi[0]+pi[1]+pi[2])/3.0
-    v2 = 0.299*pi[0]+0.587*pi[1]+0.144*pi[2]
-    print(pi)
-    print("v1:"+str(v1))
-    print("v2:"+str(v2))
+    # if is_bag_open():
+    #     Gun1,Gun2 = recognize_equiment()
+    bullet_check()
