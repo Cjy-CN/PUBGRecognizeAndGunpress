@@ -303,9 +303,7 @@ def bullet_check():
     gray_list.append(get_pixel_gray(img.getpixel((1282, 1359))))
     gray_list.append(get_pixel_gray(img.getpixel((1285, 1359))))
     gray_list.append(get_pixel_gray(img.getpixel((1281, 1359))))
-    print(gray_list)
     max_gray = max(gray_list)
-    print('max_gray:',max_gray)
     if max_gray > 240:
         return True
     else:
