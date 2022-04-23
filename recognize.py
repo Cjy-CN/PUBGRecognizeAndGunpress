@@ -11,58 +11,6 @@ from dataload import FireState, GunTest
 from matplotlib import pyplot as plt
 
 
-def current_equipment():
-    gun1 = 'None'
-    gun2 = 'None'
-    gun1_distance = 11  #武器识别的汉明距离阈值
-    gun2_distance = 11
-    # print('识别当前配枪')
-    # equi_gun_screenshot()
-    gun_path = './picture/gun/' #预先截取的demo图片路径
-    equi1_path = './picture/equiment/im_1.png' #当前武器图片路径
-    equi2_path = './picture/equiment/im_2.png'
-    content = os.listdir(gun_path)
-    for each in content:
-        demopath = gun_path+each
-        tmp_dist1 = compare2pic(equi1_path,demopath,10)
-        tmp_dist2 = compare2pic(equi2_path, demopath, 10)
-        if tmp_dist1 < gun1_distance:
-            gun1 = str(each)[:-4]
-            gun1_distance = tmp_dist1
-        if tmp_dist2 < gun2_distance:
-            gun2 = str(each)[:-4]
-            gun2_distance = tmp_dist2
-    print('1号武器是：'+gun1)
-    print('2号武器是：' +gun2)
-    return [gun1,gun2]
-
-def current_mirror():
-    mirror1 = 'None'
-    mirror2 = 'None'
-    mirror1_distance = 11  #一号倍镜识别使用的汉明距离阈值
-    mirror2_distance = 11  #二号倍镜识别使用的汉明距离阈值
-    # print('识别倍镜')
-    # equi_part_screenshot()
-    mirror_path = './picture/mirrors/' #预先截取的demo图片路径
-    mirror1_path = './picture/equiment/mirror_1.png'  #当前倍镜图片路径
-    mirror2_path = './picture/equiment/mirror_2.png'
-    content = os.listdir(mirror_path)
-    for each in content:
-        demopath = mirror_path + each
-        tmp_dist1 = compare2pic(mirror1_path, demopath, 10)
-        tmp_dist2 = compare2pic(mirror2_path, demopath, 10)
-        if tmp_dist1 < mirror1_distance:
-            mirror1 = str(each)[:-4]
-            mirror1_distance = tmp_dist1
-        if tmp_dist2 < mirror2_distance:
-            mirror2 = str(each)[:-4]
-            mirror2_distance = tmp_dist2
-    print('1号倍镜是：'+mirror1)
-    print('2号倍镜是：' +mirror2)
-    return [mirror1,mirror2]
-
-
-
 def compare_parts(file,demo_dir,threshold):
     '''
     file:要比较的图像文件路径
