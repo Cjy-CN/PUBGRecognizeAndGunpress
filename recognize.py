@@ -7,7 +7,7 @@ import time
 from PIL import Image
 import numpy as np
 import cv2
-from dataload import FireState, GunTest
+from dataload import FireState, Gun
 from matplotlib import pyplot as plt
 
 
@@ -81,8 +81,8 @@ def recognize_equiment():
             print(type(e), '::', e)
     print(gun_1,mirror_1,grip_1,muzzle_1,butt_1)
     print(gun_2, mirror_2, grip_2, muzzle_2, butt_2)
-    Gun1 = GunTest(gun_1,mirror_1,muzzle_1,grip_1,butt_1)
-    Gun2 = GunTest(gun_2,mirror_2,muzzle_2,grip_2,butt_2)
+    Gun1 = Gun(gun_1, mirror_1, muzzle_1, grip_1, butt_1)
+    Gun2 = Gun(gun_2, mirror_2, muzzle_2, grip_2, butt_2)
     return [Gun1,Gun2]
 
 def is_bag_open():
