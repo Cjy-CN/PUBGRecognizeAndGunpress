@@ -39,5 +39,5 @@ def fire():
                         sleeptime = gun.interval - elapsed
                         time.sleep(sleeptime/1000)
                         start_time = round(time.perf_counter(), 3) * 1000
-                else:
+                else: #连狙压枪
                     pass
