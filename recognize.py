@@ -244,18 +244,13 @@ def get_firestate():
 
 def bullet_check():
     img = ImageGrab.grab()
-    gray_list = []
-    gray_list.append(get_pixel_gray(img.getpixel((1290,1359))))
-    gray_list.append(get_pixel_gray(img.getpixel((1296, 1358))))
-    gray_list.append(get_pixel_gray(img.getpixel((1277, 1358))))
-    gray_list.append(get_pixel_gray(img.getpixel((1282, 1359))))
-    gray_list.append(get_pixel_gray(img.getpixel((1285, 1359))))
-    gray_list.append(get_pixel_gray(img.getpixel((1281, 1359))))
-    max_gray = max(gray_list)
-    if max_gray > 240:
-        return True
-    else:
+    gray = get_pixel_gray(img.getpixel((1226,1337)))
+    # red = img.getpixel((1286,1346))
+    # if red[0] == 255 and red[1] == 0 and red[2] == 0:
+    #     return False
+    if gray < 240:
         return False
+    return True
 
 if __name__=="__main__":
     # if is_bag_open():
