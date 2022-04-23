@@ -32,22 +32,13 @@ def on_key_press(key):
     key_pressed = shared_memory.ShareableList( name='key_pressed')
     fire_state = shared_memory.ShareableList(name='fire_state')
     fire_signal = shared_memory.ShareableList( name='fire_signal')
-    gun1 = shared_memory.ShareableList(name='gun1')
-    gun2 = shared_memory.ShareableList(name='gun2')
+    bag_signal = shared_memory.ShareableList( name='bag_signal')
     if '绝地求生' in GetWindowText(GetForegroundWindow()):
         if key == keyboard.Key.tab:
             if key_pressed[0]:
                 return True
             key_pressed[0] = True
-            if is_bag_open():
-                gun_names = current_equipment()
-                gun_mirrors = current_mirror()
-                print(gun_names)
-                print(gun_mirrors)
-                gun1[0] = gun_names[0]
-                gun1[1] = gun_mirrors[0]
-                gun2[0] = gun_names[1]
-                gun2[1] = gun_mirrors[1]
+            bag_signal[0] = True
         elif key ==  keyboard.KeyCode.from_char('1'):
             switch[0] = 0
         elif key == keyboard.KeyCode.from_char('2'):
@@ -72,8 +63,8 @@ def start_listen():
     t2.join()
 
 if __name__=='__main__':
-    print('begin')
     multiprocessing.freeze_support()
+    print('start')
     # 定义了一堆多进程的“全局变量” py3.8以上支持
     try:
         a1 = shared_memory.ShareableList([False], name='key_pressed')
@@ -81,8 +72,7 @@ if __name__=='__main__':
         a3 = shared_memory.ShareableList([False], name='firestate_inspect')
         a4 = shared_memory.ShareableList([0], name='switch')
         a5 = shared_memory.ShareableList([0,3], name='fire_state') #第一个值是人物姿势，第二个值是开火模式
-        a6 = shared_memory.ShareableList(['','','','',''], name='gun1')
-        a7 = shared_memory.ShareableList(['','','','',''], name='gun2')
+        a6 = shared_memory.ShareableList([False], name='bag_signal')
     except:
         pass
     p_fire = Process(target=fire)
