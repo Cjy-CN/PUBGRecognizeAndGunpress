@@ -30,7 +30,7 @@ def fire():
                 if gun.single == False:  #不是单发的枪
                     while True:
                         posture_ratio = gun.posture_states[fire_state[0]]
-                        down = gun.para_range[i] * posture_ratio * gun.k * 0.874
+                        down = gun.para_range[i] * posture_ratio * gun.k
                         i += 1
                         if i == gun.maxBullets or not fire_signal[0]:
                             break
