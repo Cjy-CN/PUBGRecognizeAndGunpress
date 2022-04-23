@@ -16,6 +16,8 @@ def fire():
                 Guns = recognize_equiment()
             bag_signal[0] = False
         if fire_signal[0]:
+            if not bullet_check():
+                continue
             start_time = round(time.perf_counter(), 3) * 1000
             firestate_struct = get_firestate()
             fire_state[0] = firestate_struct.posture
@@ -28,9 +30,9 @@ def fire():
                 if gun.single == False:  #不是单发的枪
                     while True:
                         posture_ratio = gun.posture_states[fire_state[0]]
-                        down = gun.para_range[i] * posture_ratio * gun.k
+                        down = gun.para_range[i] * posture_ratio * gun.k * 0.874
                         i += 1
-                        if i == gun.maxBullets or not fire_signal[0] or not bullet_check():
+                        if i == gun.maxBullets or not fire_signal[0]:
                             break
                         mouse_xy(0, down)
                         elapsed = (round(time.perf_counter(), 3) * 1000 - start_time)
