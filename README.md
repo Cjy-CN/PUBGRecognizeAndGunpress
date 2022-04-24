@@ -8,7 +8,7 @@
 
 # 如何打包为可执行程序.exe
 1. 执行pyinstaller monitor.py -p dataload.py -p ghub.py -p gun_press.py -p recognize.py
-2. 把“ghub_device.dll”，“枪械数据”文件夹,“picture”文件夹放到上一步生成的dict/monitor目录中
+2. 把“ghub_device.dll”，“枪械数据”文件夹,“picture”文件夹放到上一步生成的dist/monitor目录中
 
 # 如何调试代码
 执行monitor.py的if __name__=='__main__'
