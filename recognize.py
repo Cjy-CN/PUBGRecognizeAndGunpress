@@ -1,14 +1,11 @@
 import codecs
 import json
 import os
-
 from PIL import ImageGrab
-import time
 from PIL import Image
 import numpy as np
 import cv2
 from dataload import FireState, Gun
-from matplotlib import pyplot as plt
 
 
 def compare_parts(file,demo_dir,threshold):
@@ -49,14 +46,14 @@ def current_posture():
     return
 
 def recognize_equiment():
-    gun_1 = compare_parts('./picture/equiment/gun_1.png','./picture/gun/',11)
-    gun_2 = compare_parts('./picture/equiment/gun_2.png','./picture/gun/',11)
-    mirror_1 = compare_parts('./picture/equiment/mirror_1.png','./picture/mirrors/',11)
-    mirror_2 = compare_parts('./picture/equiment/mirror_2.png', './picture/mirrors/', 11)
-    grip_1 = compare_parts('./picture/equiment/grip_1.png','./picture/grip/',11)
-    grip_2 = compare_parts('./picture/equiment/grip_2.png', './picture/grip/', 11)
-    butt_1 = compare_parts('./picture/equiment/butt_1.png','./picture/butt/',11)
-    butt_2 = compare_parts('./picture/equiment/butt_2.png', './picture/butt/', 11)
+    gun_1 = compare_parts('./picture/equiment/gun_1.png','./picture/gun/',6)
+    gun_2 = compare_parts('./picture/equiment/gun_2.png','./picture/gun/',6)
+    mirror_1 = compare_parts('./picture/equiment/mirror_1.png','./picture/mirrors/',6)
+    mirror_2 = compare_parts('./picture/equiment/mirror_2.png', './picture/mirrors/', 6)
+    grip_1 = compare_parts('./picture/equiment/grip_1.png','./picture/grip/',6)
+    grip_2 = compare_parts('./picture/equiment/grip_2.png', './picture/grip/', 6)
+    butt_1 = compare_parts('./picture/equiment/butt_1.png','./picture/butt/',6)
+    butt_2 = compare_parts('./picture/equiment/butt_2.png', './picture/butt/', 6)
     muzzle_1 = 'None'
     muzzle_2 = 'None'
     if gun_1 != 'None':
@@ -66,7 +63,7 @@ def recognize_equiment():
                 gun_data = game_data['list'][gun_1]
                 guntype = gun_data['type']
                 muzzle_path = './picture/muzzle/' + guntype + '/'
-                muzzle_1 = compare_parts('./picture/equiment/muzzle_1.png',muzzle_path, 11)
+                muzzle_1 = compare_parts('./picture/equiment/muzzle_1.png',muzzle_path, 6)
         except Exception as e:
             print(type(e), '::', e)
     if gun_2 != 'None':
@@ -76,7 +73,7 @@ def recognize_equiment():
                 gun_data = game_data['list'][gun_2]
                 guntype = gun_data['type']
                 muzzle_path = './picture/muzzle/' + guntype + '/'
-                muzzle_2 = compare_parts('./picture/equiment/muzzle_2.png', muzzle_path, 11)
+                muzzle_2 = compare_parts('./picture/equiment/muzzle_2.png', muzzle_path, 6)
         except Exception as e:
             print(type(e), '::', e)
     print(gun_1,mirror_1,grip_1,muzzle_1,butt_1)
@@ -244,11 +241,12 @@ def get_firestate():
 
 def bullet_check():
     img = ImageGrab.grab()
-    gray = get_pixel_gray(img.getpixel((1226,1337)))
+    gray1 = get_pixel_gray(img.getpixel((1226,1337)))
+    gray2 = get_pixel_gray(img.getpixel((1223, 1358)))
     # red = img.getpixel((1286,1346))
     # if red[0] == 255 and red[1] == 0 and red[2] == 0:
     #     return False
-    if gray < 240:
+    if gray1 < 240 and gray2 < 230:
         return False
     return True
 
