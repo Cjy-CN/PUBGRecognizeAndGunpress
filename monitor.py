@@ -65,7 +65,7 @@ def start_listen(dict):
     t2.start()
     t1.join()
     t2.join()
-1
+
 if __name__=='__main__':
     multiprocessing.freeze_support()
     mgr = multiprocessing.Manager()
