@@ -1,5 +1,4 @@
 import codecs
-import re
 import json
 
 class FireState:
@@ -51,5 +50,5 @@ class Gun:
             pass
 
 if __name__ == '__main__':
-    Gun('ace32', muzzle='1')
+    pass
 

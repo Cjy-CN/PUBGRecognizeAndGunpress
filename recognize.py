@@ -251,6 +251,4 @@ def bullet_check():
     return True
 
 if __name__=="__main__":
-    # if is_bag_open():
-    #     Gun1,Gun2 = recognize_equiment()
-    bullet_check()
+    pass

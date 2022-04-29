@@ -13,6 +13,10 @@ def start_mouse_listen(dict):
         if button == button.left:
             if pressed and '绝地求生' in GetWindowText(GetForegroundWindow()):
                 dict['fire_signal'] = True
+                dict['singlebullet'] += 1
+            elif not pressed and '绝地求生' in GetWindowText(GetForegroundWindow()):
+                dict['fire_signal'] = False
+                dict['singlebullet'] -= 1
             else:
                 dict['fire_signal'] = False
         else:
@@ -23,7 +27,8 @@ def start_mouse_listen(dict):
         listener.join()
 
 
-def start_key_listen(dict):  # 键盘监听,非阻塞
+def start_key_listen(dict):
+
     def on_key_press(key):
         nonlocal dict
         if '绝地求生' in GetWindowText(GetForegroundWindow()):
@@ -71,6 +76,7 @@ if __name__=='__main__':
     dict['bag_signal'] = False
     dict['switch'] = 0
     dict['posture'] = 0
+    dict['singlebullet'] = 0
     dict['firemode'] = 3
     p_fire = Process(target=fire,args=(dict,))
     p_listen = Process(target=start_listen,args=(dict,))

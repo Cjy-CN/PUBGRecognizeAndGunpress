@@ -38,12 +38,12 @@ def fire(dict):
                         posture_ratio = gun.posture_states[dict['posture']]
                         down = gun.para_range[i] * posture_ratio * gun.k
                         i += 1
-                        if i == gun.maxBullets or not dict['fire_signal']:
+                        if i == gun.maxBullets or dict['singlebullet'] < 1:
+                            dict['singlebullet'] = 0
                             break
                         mouse_xy(0, down)
                         elapsed = (round(time.perf_counter(), 3) * 1000 - start_time)
                         sleeptime = gun.interval - elapsed
                         time.sleep(sleeptime / 1000)
-                        click_key('/')
+                        click_mouse_button(1)
                         start_time = round(time.perf_counter(), 3) * 1000
-
